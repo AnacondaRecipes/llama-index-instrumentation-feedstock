@@ -27,13 +27,17 @@ requirements:
     - deprecated >=1.2.18
     - pydantic >=2.11.5
 
+# test_aevent_concurrent_handlers asserts <15ms async handler latency; Windows workers take 20-60ms (AnacondaRecipes/llama-index-instrumentation-feedstock#3)
+{% set deselect_tests = "" %}
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_dispatcher.py::test_aevent_concurrent_handlers" %}  # [win]
+
 test:
   source_files:
     - tests
   imports:
     - llama_index_instrumentation
   commands:
-    - python -m pytest -vv tests
+    - python -m pytest -vv tests{{ deselect_tests }}
     - pip check
   requires:
     - pip
